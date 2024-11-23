@@ -1,0 +1,40 @@
+﻿@model lr10.Models.ConsultationModel
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Успішна реєстрація</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+
+        .success-message {
+            background-color: #dff0d8;
+            border: 1px solid #d6e9c6;
+            color: #3c763d;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="success-message">
+        <h2>Реєстрація успішна!</h2>
+        <p>Дякуємо за реєстрацію на консультацію.</p>
+    </div>
+
+    <div>
+        <p><strong>Ім'я та прізвище:</strong> @Model.FullName</p>
+        <p><strong>Email:</strong> @Model.Email</p>
+        <p><strong>Продукт:</strong> @Model.Product</p>
+        <p><strong>Дата консультації:</strong> @Model.ConsultationDate.ToString("dd.MM.yyyy")</p>
+    </div>
+
+    <p><a href="@Url.Action("Index")">Повернутися на головну</a></p>
+</body>
+</html>

@@ -1,0 +1,145 @@
+﻿@model lr10.Models.ConsultationModel
+@using lr10.Models
+@{
+    ViewData["Title"] = "Реєстрація на консультацію";
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>@ViewData["Title"]</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+            button:hover {
+                background-color: #45a049;
+            }
+
+        .validation-message {
+            color: red;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+
+        .field-validation-error {
+            color: red;
+            font-size: 0.9em;
+        }
+
+        .basics-monday-error {
+            color: red;
+            font-size: 0.9em;
+            margin-top: 5px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h2>@ViewData["Title"]</h2>
+
+    @using (Html.BeginForm("Index", "Home", FormMethod.Post))
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="form-group">
+            @Html.LabelFor(m => m.FullName)
+            @Html.TextBoxFor(m => m.FullName, new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.FullName, "", new { @class = "field-validation-error" })
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(m => m.Email)
+            @Html.TextBoxFor(m => m.Email, new { @class = "form-control", type = "email" })
+            @Html.ValidationMessageFor(m => m.Email, "", new { @class = "field-validation-error" })
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(m => m.Product)
+            @Html.DropDownListFor(m => m.Product,
+                     new SelectList(lr10.Models.ConsultationModel.AvailableProducts),
+                     "Виберіть продукт",
+                     new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.Product, "", new { @class = "field-validation-error" })
+            <span class="basics-monday-error">Консультації з "Основи" не проводяться по понеділках</span>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(m => m.ConsultationDate)
+            @Html.TextBoxFor(m => m.ConsultationDate, new { @class = "form-control", type = "date" })
+            @Html.ValidationMessageFor(m => m.ConsultationDate, "", new { @class = "field-validation-error" })
+        </div>
+
+        <button type="submit">Зареєструватися</button>
+    }
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.12/jquery.validate.unobtrusive.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            function checkBasicsOnMonday() {
+                var product = $('#Product').val();
+                var date = new Date($('#ConsultationDate').val());
+                var isMonday = date.getDay() === 1;
+
+                if (product === 'Основи' && isMonday) {
+                    $('.basics-monday-error').show();
+                    return false;
+                } else {
+                    $('.basics-monday-error').hide();
+                    return true;
+                }
+            }
+
+            $('#Product').change(function () {
+                checkBasicsOnMonday();
+            });
+
+            $('#ConsultationDate').change(function () {
+                if (!checkBasicsOnMonday()) {
+                    $(this).val('');
+                }
+            });
+
+            $('form').submit(function (e) {
+                if (!checkBasicsOnMonday()) {
+                    e.preventDefault();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
